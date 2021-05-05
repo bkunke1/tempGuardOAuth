@@ -188,8 +188,15 @@ app.get(
   }
 );
 
-app.get('/', (req, res) => {
-  res.send('{sensor: test}');
+app.get('/', async (req, res) => {
+  let sensorList;
+
+  try {
+    sensorList = await Sensor.find();
+  } catch (error) {
+    return res.json({ message: 'Could not retrieve products.' });
+  }
+  res.json(sensorList);
 });
 
 app.get('/getuser', (req, res) => {
