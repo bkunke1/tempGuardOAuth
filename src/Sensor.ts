@@ -11,15 +11,19 @@ const sensor = new mongoose.Schema({
   },
   sensorCurrentTemp: {
     required: true,
-    type: Number,
+    type: String,
+  },
+  sensorStatus: {
+    required: true,
+    type: String,
   },
   sensorHighAlarm: {
     required: true,
-    type: Number,
+    type: String,
   },
   sensorLowAlarm: {
     required: true,
-    type: Number,
+    type: String,
   },
 });
 

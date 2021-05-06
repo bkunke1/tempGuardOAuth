@@ -210,6 +210,35 @@ app.get('/auth/logout', (req, res) => {
   }
 });
 
+app.get('/createSensor', async (req, res) => {
+  const sensor = new Sensor({
+    sensorNumber: "x",
+    sensorName: 'newSensor',
+    sensorCurrentTemp: '10',
+    sensorStatus: 'Normal',
+    sensorHighAlarm: '20',
+    sensorLowAlarm: '30'
+  });
+  sensor
+    .save()
+    .then((result) => {
+      console.log('Created Sensor');
+      res.json({ message: 'Could not retrieve products.' });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect('/500');
+    });
+
+  // try {
+  //   sensorList = await Sensor.find();
+  // } catch (error) {
+  //   return res.json({ message: 'Could not retrieve products.' });
+  // }
+  // res.json('sensor created');
+});
+
+
 app.listen(process.env.PORT || 4000, () => {
   console.log('Server is running...');
 });
