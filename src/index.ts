@@ -6,6 +6,7 @@ import session from 'express-session';
 import passport from 'passport';
 import User from './User';
 import { IMongoDBUser } from './types';
+import Sensor from './Sensor';
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
@@ -27,9 +28,11 @@ mongoose.connect(
 
 // Middle
 app.use(express.json());
-app.use(cors({ origin: 'https://musing-golick-d5c510.netlify.app', credentials: true }));
+app.use(
+  cors({ origin: `${process.env.SELECTED_DOMAIN_PATH}`, credentials: true })
+);
 
-app.set('trust proxy', 1)
+app.set('trust proxy', 1);
 
 app.use(
   session({
@@ -37,10 +40,10 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: {
-        sameSite: 'none',
-        secure: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7 // One week
-    }
+      sameSite: 'none',
+      secure: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7, // One week
+    },
   })
 );
 app.use(passport.initialize());
@@ -159,7 +162,7 @@ app.get(
   passport.authenticate('google', { failureRedirect: '/login' }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect('https://musing-golick-d5c510.netlify.app');
+    res.redirect(`${process.env.SELECTED_DOMAIN_PATH}`);
   }
 );
 
@@ -170,7 +173,7 @@ app.get(
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect('https://musing-golick-d5c510.netlify.app');
+    res.redirect(`${process.env.SELECTED_DOMAIN_PATH}`);
   }
 );
 
@@ -181,12 +184,19 @@ app.get(
   passport.authenticate('github', { failureRedirect: '/login' }),
   function (req, res) {
     // Successful authentication, redirect home.
-    res.redirect('https://musing-golick-d5c510.netlify.app');
+    res.redirect(`${process.env.SELECTED_DOMAIN_PATH}`);
   }
 );
 
-app.get('/', (req, res) => {
-  res.send('Hello World');
+app.get('/', async (req, res) => {
+  let sensorList;
+
+  try {
+    sensorList = await Sensor.find();
+  } catch (error) {
+    return res.json({ message: 'Could not retrieve products.' });
+  }
+  res.json(sensorList);
 });
 
 app.get('/getuser', (req, res) => {
@@ -199,6 +209,35 @@ app.get('/auth/logout', (req, res) => {
     res.send('done');
   }
 });
+
+app.get('/createSensor', async (req, res) => {
+  const sensor = new Sensor({
+    sensorNumber: "x",
+    sensorName: 'newSensor',
+    sensorCurrentTemp: '10',
+    sensorStatus: 'Normal',
+    sensorHighAlarm: '20',
+    sensorLowAlarm: '30'
+  });
+  sensor
+    .save()
+    .then((result) => {
+      console.log('Created Sensor');
+      res.json({ message: 'Could not retrieve products.' });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.redirect('/500');
+    });
+
+  // try {
+  //   sensorList = await Sensor.find();
+  // } catch (error) {
+  //   return res.json({ message: 'Could not retrieve products.' });
+  // }
+  // res.json('sensor created');
+});
+
 
 app.listen(process.env.PORT || 4000, () => {
   console.log('Server is running...');
