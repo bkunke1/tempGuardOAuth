@@ -211,6 +211,8 @@ app.get('/auth/logout', (req, res) => {
 });
 
 app.get('/createSensor', async (req, res) => {
+  console.log('clicked update')
+  
   const sensor = new Sensor({
     sensorNumber: "x",
     sensorName: 'newSensor',
@@ -219,8 +221,20 @@ app.get('/createSensor', async (req, res) => {
     sensorHighAlarm: '20',
     sensorLowAlarm: '30'
   });
-  sensor
-    .save()
+
+  // async function sequentialStart() {
+  //   console.log('starting sensor save...');
+
+  //   const result = await sensor.save();
+
+  //   console.log('sensor has been saved!');
+  // }
+  
+  //     console.log('Created Sensor');
+      
+  //   });
+
+    sensor.save()
     .then((result) => {
       console.log('Created Sensor');
       res.json({ message: 'Could not retrieve products.' });
