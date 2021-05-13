@@ -210,7 +210,17 @@ app.get('/auth/logout', (req, res) => {
   }
 });
 
-app.get('/createSensor', async (req, res) => {
+// // Add Access Control Allow Origin headers
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");;
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
+
+app.post('/createSensor', (req, res) => {
   console.log('clicked update')
   
   const sensor = new Sensor({
@@ -221,6 +231,8 @@ app.get('/createSensor', async (req, res) => {
     sensorHighAlarm: '20',
     sensorLowAlarm: '30'
   });
+
+  console.log('clicked update2')
 
   // async function sequentialStart() {
   //   console.log('starting sensor save...');
