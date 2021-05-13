@@ -159,7 +159,7 @@ app.get(
 
 app.get(
   '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/login', prompt: 'consent' }),
   function (req, res) {
     // Successful authentication, redirect home.
     res.redirect(`${process.env.SELECTED_DOMAIN_PATH}`);
