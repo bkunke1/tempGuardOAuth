@@ -11,6 +11,11 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
 
+// graphql imports
+const { graphqlHTTP } = require('express-graphql');
+const graphqlSchema = require('../graphql/schema');
+const graphqlResolver = require('../graphql/resolvers');
+
 dotenv.config();
 
 const app = express();
@@ -159,7 +164,10 @@ app.get(
 
 app.get(
   '/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login', prompt: 'consent' }),
+  passport.authenticate('google', {
+    failureRedirect: '/login',
+    prompt: 'consent',
+  }),
   function (req, res) {
     // Successful authentication, redirect home.
     res.redirect(`${process.env.SELECTED_DOMAIN_PATH}`);
@@ -186,6 +194,15 @@ app.get(
     // Successful authentication, redirect home.
     res.redirect(`${process.env.SELECTED_DOMAIN_PATH}`);
   }
+);
+
+app.use(
+  '/graphql',
+  graphqlHTTP({
+    schema: graphqlSchema,
+    rootValue: graphqlResolver,
+    graphiql: true
+  })
 );
 
 app.get('/', async (req, res) => {
@@ -221,18 +238,18 @@ app.get('/auth/logout', (req, res) => {
 // });
 
 app.post('/createSensor', (req, res) => {
-  console.log('clicked update')
-  
+  console.log('clicked update');
+
   const sensor = new Sensor({
-    sensorNumber: "x",
+    sensorNumber: 'x',
     sensorName: 'newSensor',
     sensorCurrentTemp: '10',
     sensorStatus: 'Normal',
     sensorHighAlarm: '20',
-    sensorLowAlarm: '30'
+    sensorLowAlarm: '30',
   });
 
-  console.log('clicked update2')
+  console.log('clicked update2');
 
   // async function sequentialStart() {
   //   console.log('starting sensor save...');
@@ -241,12 +258,13 @@ app.post('/createSensor', (req, res) => {
 
   //   console.log('sensor has been saved!');
   // }
-  
+
   //     console.log('Created Sensor');
-      
+
   //   });
 
-    sensor.save()
+  sensor
+    .save()
     .then((result) => {
       console.log('Created Sensor');
       res.json({ message: 'Could not retrieve products.' });
@@ -263,7 +281,6 @@ app.post('/createSensor', (req, res) => {
   // }
   // res.json('sensor created');
 });
-
 
 app.listen(process.env.PORT || 4000, () => {
   console.log('Server is running...');
