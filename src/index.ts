@@ -7,14 +7,15 @@ import passport from 'passport';
 import User from './User';
 import { IMongoDBUser } from './types';
 import Sensor from './Sensor';
+// import Sensor2 from './models/Sensor2'
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const GitHubStrategy = require('passport-github').Strategy;
 
 // graphql imports
 const { graphqlHTTP } = require('express-graphql');
-const graphqlSchema = require('../graphql/schema');
-const graphqlResolver = require('../graphql/resolvers');
+const graphqlSchema = require('./graphql/schema');
+const graphqlResolver = require('./graphql/resolvers');
 
 dotenv.config();
 
@@ -34,7 +35,8 @@ mongoose.connect(
 // Middle
 app.use(express.json());
 app.use(
-  cors({ origin: `${process.env.SELECTED_DOMAIN_PATH}`, credentials: true })
+  // cors({ origin: `${process.env.SELECTED_DOMAIN_PATH}`, credentials: true })
+  cors({ origin: `http://localhost:3000`, credentials: true })
 );
 
 app.set('trust proxy', 1);
@@ -196,6 +198,19 @@ app.get(
   }
 );
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use(
   '/graphql',
   graphqlHTTP({
@@ -226,16 +241,6 @@ app.get('/auth/logout', (req, res) => {
     res.send('done');
   }
 });
-
-// // Add Access Control Allow Origin headers
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "*");;
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept"
-//   );
-//   next();
-// });
 
 app.post('/createSensor', (req, res) => {
   console.log('clicked update');

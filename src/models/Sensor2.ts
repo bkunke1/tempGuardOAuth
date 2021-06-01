@@ -29,3 +29,4 @@ const sensor2Schema = new Schema({
   });
 
 module.exports = mongoose.model('Sensor2', sensor2Schema);
+// export default mongoose.model('Sensor2', sensor2Schema);

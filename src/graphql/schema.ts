@@ -11,6 +11,11 @@ module.exports = buildSchema(`
         sensorLowAlarm: String!        
     }
 
+    type SensorData {
+        sensors: [Sensor!]!
+        totalSensors: Int!
+    }
+
     input SensorInputData {
         name: String!
         highAlarm: String!
@@ -18,7 +23,7 @@ module.exports = buildSchema(`
     }
 
     type RootQuery {
-        hello: String
+        sensors: SensorData!
     }
 
     type RootMutation {
