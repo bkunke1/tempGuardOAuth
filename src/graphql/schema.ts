@@ -22,12 +22,21 @@ module.exports = buildSchema(`
         lowAlarm: String!
     }
 
+    input SensorEditInputData {
+        _id: ID!
+        name: String!
+        highAlarm: String!
+        lowAlarm: String!
+        calibrationTemp: String!
+    }
+
     type RootQuery {
         sensors: SensorData!
     }
 
     type RootMutation {
         createSensor(sensorInput: SensorInputData): Sensor!
+        editSensor(sensorInput: SensorEditInputData): Sensor!
     }
 
     schema {
